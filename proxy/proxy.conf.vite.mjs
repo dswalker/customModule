@@ -54,11 +54,11 @@ export const proxy = {
   // Instead we re-issue the request to the dev server itself (mirroring the old
   // webpack `router -> self host` + `pathRewrite`). The self-request re-enters
   // the middleware stack from the top, where the assets middleware serves it.
-  '^/(?:nde/)?custom/[^/]+/assets': {
+  '^/(?:nde(?:-next)?/)?custom/[^/]+/assets': {
     target: SELF_TARGET,
     changeOrigin: false,
     rewrite: (path) =>
-      path.replace(/^\/(?:nde\/)?custom\/[^/]+\/assets\/?/, '/assets/'),
+      path.replace(/^\/(?:nde(?:-next)?\/)?custom\/[^/]+\/assets\/?/, '/assets/'),
   },
 
   // ── Rule 2 ────────────────────────────────────────────────────────────────
@@ -102,10 +102,10 @@ export const proxy = {
   // `{ '^/nde/custom/.*/': '' }`). Like Rule 1 this is re-issued to the dev
   // server itself so it reaches Angular's output-file/asset middleware. The
   // rewrite keeps a leading slash so the path is servable.
-  '^/nde/custom/': {
+  '^/nde(?:-next)?/custom/': {
     target: SELF_TARGET,
     changeOrigin: false,
-    rewrite: (path) => path.replace(/^\/nde\/custom\/.*\//, '/'),
+    rewrite: (path) => path.replace(/^\/nde(?:-next)?\/custom\/.*\//, '/'),
   },
 
   // ── Rule 4 ────────────────────────────────────────────────────────────────
@@ -122,15 +122,21 @@ export const proxy = {
     // webpack-dev-server served its own runtime before the `**` proxy matched.
     bypass: (req) => {
       const url = req.url || '';
+      // Do NOT serve /nde/ or /nde-next/ paths locally (except /nde/custom/
+      // and /nde-next/custom/ already handled by Rule 3).
+      // Only /nde/custom/ and /nde-next/custom/ paths should be served locally.
+      if (url.startsWith('/nde/') || url.startsWith('/nde-next/')) {
+        return; // proxy to PROXY_TARGET
+      }
       if (
         url.startsWith('/@') || // /@vite/client, /@id/, /@fs/, /@ng/, /@angular/ ...
         url.startsWith('/node_modules/') ||
         url.startsWith('/.vite/') ||
         url.startsWith('/src/') ||
         url.startsWith('/__vite') ||
-        url.startsWith('/ng-cli-ws')  // Angular dev-server websocket
-        // || /\.[cm]?[jt]sx?(\?|$)/.test(url) || // .js/.mjs/.ts/.tsx module requests
-        // /\.map(\?|$)/.test(url) // sourcemaps
+        url.startsWith('/ng-cli-ws') ||  // Angular dev-server websocket
+        /\.[cm]?[jt]sx?(\?|$)/.test(url) || // .js/.mjs/.ts/.tsx module requests
+        /\.map(\?|$)/.test(url) // sourcemaps
       ) {
         return url; // serve locally
       }

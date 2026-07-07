@@ -16,7 +16,9 @@ const proxyRules = [
       '/custom/*/assets',
       '/custom/*/assets/**',
       '/nde/custom/*/assets',
-      '/nde/custom/*/assets/**'
+      '/nde/custom/*/assets/**',
+      '/nde-next/custom/*/assets',
+      '/nde-next/custom/*/assets/**'
     ],
     target: 'not-needed',
     router: (req) => `${req.protocol}://${req.get('host')}`,
@@ -52,7 +54,8 @@ const proxyRules = [
   },
   {
     context: [
-      '/nde/custom/**'
+      '/nde/custom/**',
+      '/nde-next/custom/**'
     ],
     target: 'not-needed',
     router: (req) => {
@@ -63,12 +66,12 @@ const proxyRules = [
     },
     secure: true,
     logLevel: 'debug',
-    pathRewrite: { '^/nde/custom/.*/': '' },
+    pathRewrite: { '^/nde(?:-next)?/custom/.*/': '' },
 
   },
   {
     context: [
-      '**', '!/nde/custom/**'
+      '**', '!/nde/custom/**', '!/nde-next/custom/**'
     ],
     target: PROXY_TARGET,
     secure: true,
