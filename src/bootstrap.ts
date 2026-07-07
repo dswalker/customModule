@@ -1,0 +1,21 @@
+import "@angular/compiler";
+import { AppModule } from './app/app.module';
+import {bootstrap} from "@angular-architects/module-federation-tools";
+import {platformBrowser} from "@angular/platform-browser";
+
+// export const bootstrapRemoteApp = (bootstrapOptions: any) => {
+//    return bootstrap(AppModule(bootstrapOptions), {
+//     production: true,
+//     appType: 'microfrontend'
+//   }).then(r => {
+//     console.log('custom remote app bootstrap success!', r);
+//     return r
+//   });
+// }
+export const bootstrapRemoteApp = (bootstrapOptions: any) => {
+  return platformBrowser().bootstrapModule(AppModule(bootstrapOptions), {
+  }).then(r => {
+    console.log('custom remote app bootstrap success!', r);
+    return r
+  });
+}
