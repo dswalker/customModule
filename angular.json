@@ -129,9 +129,8 @@
 					},
 					"defaultConfiguration": "development",
 					"options": {
-						"port": 4201,
-						"publicHost": "http://localhost:4201",
-						"disableHostCheck": true
+            "proxyConfig": "./proxy/proxy.conf.vite.mjs",
+						"port": 4201
 					}
 				}
 			}

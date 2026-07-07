@@ -5,7 +5,10 @@ import {deepMerge} from "./proxy-utils.mjs";
 
 
 
-
+/*
+This proxy conf is for webpack dev server proxy and is no longer on use with vite.
+For vite we use proxy.conf.vite.mjs instead.
+ */
 
 const proxyRules = [
   {
