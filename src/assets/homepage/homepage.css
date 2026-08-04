@@ -1,0 +1,4 @@
+/*Add background color to header navigation bar*/
+header{
+  background-color: var(--sys-primary-container) !important;
+}
