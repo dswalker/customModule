@@ -5,7 +5,6 @@ const os = require('node:os');
 const path = require('node:path');
 
 const { writeAssetManifest, normalizeManifestPath, collectAssetManifest } = require('../postbuild.js');
-const { deepMerge } = require('../proxy/proxy-utils.mjs');
 
 test('writeAssetManifest creates sorted relative manifest and ignores stale manifest', () => {
   const tempRoot = fs.mkdtempSync(path.join(os.tmpdir(), 'asset-manifest-'));
@@ -56,7 +55,9 @@ test('writeAssetManifest creates sorted relative manifest and ignores stale mani
   assert.equal(manifest.directories.includes('old'), false);
 });
 
-test('deepMerge unions files and directories from remote and local manifests', () => {
+test('deepMerge unions files and directories from remote and local manifests', async () => {
+  const { deepMerge } = await import('../proxy/proxy-utils.mjs');
+
   const targetManifest = {
     files: ['assets/landingpage/icon1.svg', 'assets/landingpage/search.svg'],
     directories: ['assets/landingpage'],

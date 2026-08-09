@@ -96,7 +96,6 @@ function renameAndArchive() {
     try {
         fs.renameSync(distPath, targetPath);
         console.log(`Renamed directory to ${targetPath}`);
-        writeAssetManifest(targetPath);
 
         const output = fs.createWriteStream(zipPath);
         const archive = archiver('zip', { zlib: { level: 9 } });

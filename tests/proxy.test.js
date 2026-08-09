@@ -19,3 +19,28 @@ test('resolveCustomModuleManifestPath handles IZ manifest requests and ignores c
   assert.equal(shouldProxyLandingPageAssetRequest('/nde/custom/TEST_INST-TEST_VIEW/assets/landingpage/search.svg'), true);
   assert.equal(shouldProxyLandingPageAssetRequest('/custom/TEST_INST-TEST_VIEW/assets/main.js'), false);
 });
+
+test('createMergedAssetManifest merges dynamic IZ proxy sources and derives directories from files', async () => {
+  const { createMergedAssetManifest, normalizeManifestPath, addParentDirectories } = await import('../proxy/proxy-utils.mjs');
+
+  const manifestA = {
+    files: ['assets/css/custom.css', 'assets/images/a.svg'],
+    directories: ['assets', 'assets/css', 'assets/images']
+  };
+
+  const manifestB = {
+    files: ['assets/css/custom.css', 'assets/images/b.svg'],
+    directories: ['assets', 'assets/css', 'assets/images']
+  };
+
+  const merged = createMergedAssetManifest([manifestA, manifestB]);
+
+  assert.deepEqual(merged.files, ['assets/css/custom.css', 'assets/images/a.svg', 'assets/images/b.svg']);
+  assert.deepEqual(merged.directories, ['assets', 'assets/css', 'assets/images']);
+
+  const filePath = 'C:\\env\\nde\\mainCustomModule\\dist\\customModule\\assets\\images\\logo.svg';
+  assert.equal(normalizeManifestPath(filePath, 'C:\\env\\nde\\mainCustomModule\\dist\\customModule'), 'assets/images/logo.svg');
+
+  const derived = addParentDirectories(['assets/images/icons/test.svg']);
+  assert.deepEqual(derived, ['assets', 'assets/images', 'assets/images/icons']);
+});

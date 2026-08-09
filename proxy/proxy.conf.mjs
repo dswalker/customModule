@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import {PROXY_TARGET} from "./proxy.const.mjs";
 import {customizationConfigOverride} from "./customization_config_override.mjs";
-import {buildMergedManifestResponse, deepMerge, resolveCustomModuleManifestPath, shouldProxyLandingPageAssetRequest, shouldProxyLandingPageRequest} from "./proxy-utils.mjs";
+import {buildMergedManifestResponse, createLocalCustomModuleAssetManifest, deepMerge, isCustomModuleAssetManifestRequest, resolveCustomModuleManifestPath} from "./proxy-utils.mjs";
 
 async function serveCustomModuleManifest(req, res) {
   const manifestPath = resolveCustomModuleManifestPath(req.url);
